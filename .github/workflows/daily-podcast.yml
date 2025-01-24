@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: PocketCoder/ephemera
-        submodules: recursive
+        submodules: false
     
     - name: Install system dependencies
       run: |
@@ -26,17 +26,15 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
-
-    - name: Prepare submodule
-      run: |
-        touch Kokoro-82M/__init__.py
-        cd Kokoro-82M
-        pip install -r requirements.txt || true
     
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Clone Kokoro-82M
+      run: |
+        git clone https://huggingface.co/hexgrad/Kokoro-82M Kokoro-82M
     
     - name: Generate Podcast
       env:
