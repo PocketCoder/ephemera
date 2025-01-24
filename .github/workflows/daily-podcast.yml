@@ -8,6 +8,7 @@ on:
 jobs:
   generate-podcast:
     runs-on: ubuntu-latest
+    environment: Daily Generator
     
     steps:
     - name: Checkout repository
