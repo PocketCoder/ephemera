@@ -82,7 +82,7 @@ def getOnThisDay():
     return items
 
 
-def getFromTodaysFegiaturedList():
+def getFromTodaysFeaturedList():
     print("Getting From Today's Featured List...", end="")
     article = soup.find(id="mp-tfl")
     content = article.find("p")
