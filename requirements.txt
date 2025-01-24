@@ -61,7 +61,8 @@ soupsieve
 sympy
 tabulate
 tokenizers
-torch --extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchaudio
 torchvision
 tqdm
 transformers
