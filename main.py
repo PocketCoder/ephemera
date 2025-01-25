@@ -82,15 +82,6 @@ def getOnThisDay():
     return items
 
 
-def getFromTodaysFeaturedList():
-    print("Getting From Today's Featured List...", end="")
-    article = soup.find(id="mp-tfl")
-    content = article.find("p")
-    text = content.get_text()[:-16]  # Remove (Full List...)
-    print("Done")
-    return text
-
-
 def getFeaturedImage():
     print("Getting Featured Image...")
     article = soup.find(id="mp-tfp")
@@ -99,8 +90,8 @@ def getFeaturedImage():
     image_page_url = "https://en.wikipedia.org" + article.find("a").get("href")
     image_page = requests.get(image_page_url)
     image_soup = BeautifulSoup(image_page.content, "html.parser")
-    image_div = image_soup.find(id="file")
-    image_url = image_div.find("a").get("href")
+    thumbnail = image_soup.find_all("a", class_="mw-thumbnail-link")[0]
+    image_url = thumbnail.get("href")
     full_url = "https:" + image_url
     print("Getting Featured Image Done")
     return [text, full_url]
@@ -139,7 +130,7 @@ def compileBrief():
     brief = {
         "Today's Featured Article": getFeaturedArticle(),
         "On This Day": getOnThisDay(),
-        "From Today's Featured List": getFromTodaysFeaturedList(),
+        "In the News:": getInTheNews(),
         "Featured Image Text": getFeaturedImage()[0],
         "Featured Image Description": describeFeaturedImage(),
     }
