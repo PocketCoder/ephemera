@@ -53,7 +53,6 @@ rpds-py
 safetensors
 scipy
 segments
-selenium
 setuptools
 six
 sniffio
