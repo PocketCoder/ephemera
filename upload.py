@@ -1,25 +1,87 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver import ActionChains
+
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+import os
 
 
-def upload_podcast(title, description, audio_file):
+def upload_podcast(title, description, audio_file, season):
     driver = webdriver.Firefox()
     driver.get(
         "https://app.redcircle.com/shows/cc3aa3f2-8c37-47e5-a0bc-89dd0e19e887/ep/create"
     )
-    assert "Ephemera" in driver.title
 
-    title_elem = driver.find_element(By.NAME, "title")
+    if "Sign In" in driver.title:
+        print("Logging in...", end="\n\n")
+        log_in(driver)
+
+    wait = WebDriverWait(driver, 10)
+    title_elem = wait.until(
+        EC.presence_of_element_located(
+            (By.XPATH, "//input[@type='text'][@name='title']")
+        )
+    )
     title_elem.clear()
     title_elem.send_keys(title)
 
-    description_elem = driver.find_element(By.XPATH, "//div[@class='ql-editor']")
-    description_elem.clear()
+    description_elem = wait.until(
+        EC.presence_of_element_located(
+            (
+                By.XPATH,
+                "/html/body/div[3]/div/div[2]/div/div[1]/div/div/div[2]/div/form/div/div/div/div[2]/div[3]/div/div/div[2]/div[1]",
+            )
+        )
+    )
+    description_elem.click()
     description_elem.send_keys(description)
 
-    audio_elem = driver.find_element(By.XPATH, "//div[@class='audio-drop-zone']")
-    ActionChains(driver).move_to_element(audio_elem).click().perform()
+    audio_elem = driver.find_element(
+        By.XPATH,
+        "//div[contains(concat(' ',normalize-space(@class),' '),' audio-drop-zone-content ')]/input[@type='file']",
+    )
+
+    file_path = os.path.abspath(audio_file)
+    audio_elem.send_keys(file_path)
+
+    more_options_elem = driver.find_element(By.CSS_SELECTOR, ".form-dropdown-wrapper")
+    more_options_elem.click()
+
+    lst = os.listdir("output/0/")
+    episode_number = len(lst) - 1
+
+    episode_number_elem = driver.find_element(By.NAME, "episodeNumber")
+    episode_number_elem.clear()
+    episode_number_elem.send_keys(episode_number)
+
+    season_number_elem = driver.find_element(By.NAME, "season")
+    season_number_elem.clear()
+    season_number_elem.send_keys(season + 1)
+
+    submit_button = driver.find_element(
+        By.XPATH,
+        "/html/body/div[3]/div/div[2]/div/div[1]/div/div/div[3]/div/button[2]",
+    )
+    submit_button.click()
+
+
+def log_in(driver):
+    email_elem = driver.find_element(By.NAME, "email")
+    email_elem.clear()
+    email = os.environ.get("EMAIL")
+    email_elem.send_keys(email)
+
+    password_elem = driver.find_element(By.NAME, "password")
+    password_elem.clear()
+    password = os.environ.get("PASSWORD")
+    password_elem.send_keys(password)
+
+    ActionChains(driver).move_to_element(
+        driver.find_element(By.XPATH, "//button[@type='submit']")
+    ).click().perform()
 
 
 if __name__ == "__main__":
