@@ -37,7 +37,8 @@ jobs:
 
     - name: Clone Kokoro-82M
       run: |
-        git clone https://github.com/PocketCoder/Kokoro-82M.git Kokoro-82M
+        git lfs install
+        git clone https://huggingface.co/hexgrad/kLegacy Kokoro-82M
     
     - name: Generate Podcast
       env:
