@@ -1,6 +1,6 @@
 import os, sys
 
-project_path = os.path.join(os.getcwd(), "Kokoro-82M")
+project_path = os.path.join(os.getcwd(), "Kokoro-82M/v0.19")
 sys.path.insert(0, project_path)
 
 from models import build_model
@@ -20,7 +20,7 @@ from upload import upload_podcast
 client = Groq()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL = build_model("Kokoro-82M/kokoro-v0_19.pth", device)
+MODEL = build_model("Kokoro-82M/v.19/kokoro-v0_19.pth", device)
 VOICE_NAME = [
     "af",  # Default voice is a 50-50 mix of Bella & Sarah
     "af_bella",
@@ -34,9 +34,9 @@ VOICE_NAME = [
     "af_nicole",
     "af_sky",
 ][8]
-VOICEPACK = torch.load(f"Kokoro-82M/voices/{VOICE_NAME}.pt", weights_only=True).to(
-    device
-)
+VOICEPACK = torch.load(
+    f"Kokoro-82M/v0.19/voices/{VOICE_NAME}.pt", weights_only=True
+).to(device)
 print(f"Loaded voice: {VOICE_NAME}")
 
 
