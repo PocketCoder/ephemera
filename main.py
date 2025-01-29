@@ -15,6 +15,8 @@ from bs4 import BeautifulSoup
 from groq import Groq
 from datetime import datetime
 
+from upload import upload_podcast
+
 client = Groq()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -180,6 +182,57 @@ def compileFile(audio, season, date, time):
     )
     sf.write(output_filename, audio, 24000)
     print(f"Audio saved to: {output_filename}")
+    return output_filename
+
+
+def generateTitleDescription(script):
+    title_completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Generate an engaging title for this podcast episode using the following script. Output just the title and nothing else. "
+                        + script,
+                    }
+                ],
+            },
+        ],
+        temperature=1,
+        max_completion_tokens=3000,
+        top_p=1,
+        stream=False,
+        stop=None,
+    )
+    title = title_completion.choices[0].message.content
+    print(title)
+
+    description_completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Generate a short description for this podcast episode using the following script. Output just the description and nothing else. "
+                        + script,
+                    }
+                ],
+            },
+        ],
+        temperature=1,
+        max_completion_tokens=3000,
+        top_p=1,
+        stream=False,
+        stop=None,
+    )
+    description = description_completion.choices[0].message.content
+    print(description)
+
+    return title, description
 
 
 if __name__ == "__main__":
@@ -195,5 +248,12 @@ if __name__ == "__main__":
     script = generateScript(brief, getFeaturedImage()[1])
     audio = np.concatenate([generateIntro(), generateAudio(script)])
     TIME = datetime.now().strftime("%H%M%S")
-    compileFile(audio, SEASON, DATE, TIME)
+    file = compileFile(audio, SEASON, DATE, TIME)
     print("Audio generation complete.")
+    title, description = generateTitleDescription(script)
+    upload_podcast(
+        audio_file=file,
+        season=SEASON,
+        title=DATE + ": " + title,
+        description=description,
+    )
