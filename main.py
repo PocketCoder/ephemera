@@ -20,7 +20,7 @@ from upload import upload_podcast
 client = Groq()
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL = build_model("Kokoro-82M/v.19/kokoro-v0_19.pth", device)
+MODEL = build_model("Kokoro-82M/v0.19/kokoro-v0_19.pth", device)
 VOICE_NAME = [
     "af",  # Default voice is a 50-50 mix of Bella & Sarah
     "af_bella",
