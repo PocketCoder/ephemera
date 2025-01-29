@@ -35,9 +35,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Initialize and Update Submodules
+    - name: Clone Kokoro-82M
       run: |
-        git submodule update --init --recursive
+        git clone https://github.com/PocketCoder/Kokoro-82M.git Kokoro-82M
     
     - name: Generate Podcast
       env:
