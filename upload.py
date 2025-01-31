@@ -5,12 +5,15 @@ from selenium.webdriver import ActionChains
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.firefox.options import Options
 
 import os
 
 
 def upload_podcast(title, description, audio_file, season):
-    driver = webdriver.Firefox()
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
     driver.get(
         "https://app.redcircle.com/shows/cc3aa3f2-8c37-47e5-a0bc-89dd0e19e887/ep/create"
     )
@@ -66,6 +69,7 @@ def upload_podcast(title, description, audio_file, season):
         "/html/body/div[3]/div/div[2]/div/div[1]/div/div/div[3]/div/button[2]",
     )
     submit_button.click()
+    driver.quit()
 
 
 def log_in(driver):
