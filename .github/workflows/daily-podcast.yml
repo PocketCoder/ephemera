@@ -23,7 +23,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsndfile1 espeak
+        sudo apt-get install -y libsndfile1 espeak firefox-geckodriver firefox xvfb libgtk-3-0 libdbus-glib-1-2
 
     - name: Set up Python
       uses: actions/setup-python@v4
