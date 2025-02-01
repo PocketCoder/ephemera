@@ -6,6 +6,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 
 import os
 
@@ -13,7 +14,9 @@ import os
 def upload_podcast(title, description, audio_file, season):
     options = Options()
     options.headless = True
-    driver = webdriver.Firefox(options=options)
+    options.binary_location = "/snap/bin/firefox"
+    service = Service("/snap/bin/geckodriver")
+    driver = webdriver.Firefox(service=service, options=options)
     driver.get(
         "https://app.redcircle.com/shows/cc3aa3f2-8c37-47e5-a0bc-89dd0e19e887/ep/create"
     )
