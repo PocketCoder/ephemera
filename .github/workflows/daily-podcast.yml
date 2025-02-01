@@ -3,7 +3,7 @@ name: Daily Wikipedia Podcast Generation
 on:
   schedule:
     - cron: '0 1 * * *'  # Runs at 1 AM UTC every day
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -23,7 +23,12 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsndfile1 espeak firefox xvfb libgtk-3-0 libdbus-glib-1-2
+        sudo apt-get install -y libsndfile1 espeak firefox xvfb libgtk-3-0 libdbus-glib-1-2 unzip xvfb libxi6 libgconf-2-4 default-jdk
+
+    - name: Install Gecko Driver
+      run: |
+        wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz
+        tar -xvf geckodriver-v0.35.0-linux64.tar.gz -C drivers/
 
     - name: Set up Python
       uses: actions/setup-python@v4
