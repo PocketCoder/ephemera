@@ -23,12 +23,12 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsndfile1 espeak firefox xvfb libgtk-3-0 libdbus-glib-1-2 unzip xvfb libxi6 libgconf-2-4 default-jdk
+        sudo apt-get install -y libsndfile1 espeak firefox xvfb libgtk-3-0
 
     - name: Install Gecko Driver
       run: |
         wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz
-        tar -xvf geckodriver-v0.35.0-linux64.tar.gz -C drivers/
+        tar -C /usr/local/bin/ -xzf geckodriver-v0.35.0-linux64.tar.gz
 
     - name: Set up Python
       uses: actions/setup-python@v4
