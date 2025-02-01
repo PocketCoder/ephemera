@@ -29,9 +29,8 @@ jobs:
       run: |
         wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz
         tar -xzf geckodriver-v0.35.0-linux64.tar.gz
-        sudo mv geckodriver /usr/local/bin/
-        sudo chmod +x /usr/local/bin/geckodriver
-        geckodriver --version
+        sudo mv geckodriver /snap/bin/
+        sudo chmod +x /snap/bin/geckodriver
 
     - name: Verify Firefox & Geckodriver Installation
       run: |
@@ -57,10 +56,15 @@ jobs:
     
     - name: Fake Display
       run: |
-        Xvfb :99 -screen 0 1920x1080x24 & export DISPLAY=:99
+        Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+        echo "export DISPLAY=:99" >> $GITHUB_ENV
 
     - name: Generate Podcast
       env:
+        DISPLAY: :99
+        MOZ_HEADLESS: 1
+        EMAIL: ${{ secrets.EMAIL }}
+        PASSWORD: ${{ secrets.PASSWORD }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       run: |
         python main.py

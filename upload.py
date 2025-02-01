@@ -15,8 +15,23 @@ def upload_podcast(title, description, audio_file, season):
     options = Options()
     options.headless = True
     options.binary_location = "/snap/bin/firefox"
+
+    print(f"Firefox binary location: {options.binary_location}")
+    print(f"Checking if Firefox exists: {os.path.exists(options.binary_location)}")
+
     service = Service("/snap/bin/geckodriver")
-    driver = webdriver.Firefox(service=service, options=options)
+    print(f"Geckodriver location: {service.path}")
+    print(f"Checking if geckodriver exists: {os.path.exists(service.path)}")
+
+    try:
+        driver = webdriver.Firefox(service=service, options=options)
+        print("Firefox driver created successfully")
+    except Exception as e:
+        print(f"Error creating Firefox driver: {str(e)}")
+        print(f"Firefox version output: {os.popen('firefox --version').read()}")
+        print(f"Geckodriver version output: {os.popen('geckodriver --version').read()}")
+        raise
+
     driver.get(
         "https://app.redcircle.com/shows/cc3aa3f2-8c37-47e5-a0bc-89dd0e19e887/ep/create"
     )
