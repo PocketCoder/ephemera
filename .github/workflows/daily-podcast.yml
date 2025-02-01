@@ -23,12 +23,22 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsndfile1 espeak firefox xvfb libgtk-3-0
+        sudo apt-get install -y libsndfile1 espeak firefox xvfb libgtk-3-0 libdbus-glib-1-2 libasound2
 
     - name: Install Gecko Driver
       run: |
         wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz
-        tar -C /usr/local/bin/ -xzf geckodriver-v0.35.0-linux64.tar.gz
+        tar -xzf geckodriver-v0.35.0-linux64.tar.gz
+        sudo mv geckodriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/geckodriver
+        geckodriver --version
+
+    - name: Verify Firefox & Geckodriver Installation
+      run: |
+        which firefox
+        which geckodriver
+        firefox --version
+        geckodriver --version
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -45,6 +55,10 @@ jobs:
         git lfs install
         git clone https://huggingface.co/hexgrad/kLegacy Kokoro-82M
     
+    - name: Fake Display
+      run: |
+        Xvfb :99 -screen 0 1920x1080x24 & export DISPLAY=:99
+
     - name: Generate Podcast
       env:
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
