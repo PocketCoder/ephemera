@@ -89,6 +89,8 @@ def log_in(driver):
 
 
 if __name__ == "__main__":
+    os.environ.set("EMAIL", "jollies.puffin-0o@icloud.com")
+    os.environ.set("PASSWORD", "honCi9-pakfes-dicvow")
     upload_podcast(
         "Test", "Test", "output/0/S0-26-01-2025-kokoro_audio_bm_lewis-021423.mp3"
     )

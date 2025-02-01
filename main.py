@@ -43,7 +43,7 @@ print(f"Loaded voice: {VOICE_NAME}")
 def getFeaturedArticle():
     print("Getting Featured Article...", end="")
     article = soup.find(id="mp-tfa")
-    content = article.find("p")
+    content = article.find("p") if article.find("p") else article
     print("Done")
     return content.get_text()
 
@@ -246,14 +246,19 @@ if __name__ == "__main__":
     soup = BeautifulSoup(page.content, "html.parser")
     brief = compileBrief()
     script = generateScript(brief, getFeaturedImage()[1])
+    print("Generating audio")
     audio = np.concatenate([generateIntro(), generateAudio(script)])
     TIME = datetime.now().strftime("%H%M%S")
     file = compileFile(audio, SEASON, DATE, TIME)
     print("Audio generation complete.")
     title, description = generateTitleDescription(script)
+    print(title)
+    print(description)
+    print("Uploading podcast...", end="")
     upload_podcast(
         audio_file=file,
         season=SEASON,
         title=DATE + ": " + title,
         description=description,
     )
+    print("Done")
