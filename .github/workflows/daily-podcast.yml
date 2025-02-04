@@ -24,16 +24,16 @@ jobs:
       uses: nanasess/setup-chromedriver@v2
     
     - name: Cache Homebrew packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            /usr/local/Homebrew
-            /usr/local/bin
-            /usr/local/lib
-            /usr/local/Cellar
-          key: brew-${{ runner.os }}-${{ hashFiles('**/Brewfile') }}
-          restore-keys: |
-            brew-${{ runner.os }}-
+      uses: actions/cache@v3
+      with:
+        path: |
+          /usr/local/Homebrew
+          /usr/local/bin
+          /usr/local/lib
+          /usr/local/Cellar
+        key: brew-${{ runner.os }}-${{ hashFiles('**/Brewfile') }}
+        restore-keys: |
+          brew-${{ runner.os }}-
 
     - name: Install system dependencies (only if not cached)
       run: |
