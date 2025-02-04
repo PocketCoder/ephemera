@@ -24,13 +24,15 @@ jobs:
       uses: nanasess/setup-chromedriver@v2
     
     - name: Install system dependencies
-    - uses: gerlero/brew-install@v1
-      with:
-        packages: espeak-ng 
+      run: |
+        brew install espeak-ng
+        brew link espeak-ng
 
     - name: Add espeak to PATH
       run: |
+        which espeak
         echo "$(brew --prefix)/bin" >> $GITHUB_PATH
+        which espeak
 
     - name: Set up Python
       uses: actions/setup-python@v4
