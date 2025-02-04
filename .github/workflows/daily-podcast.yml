@@ -24,9 +24,9 @@ jobs:
       uses: nanasess/setup-chromedriver@v2
     
     - name: Install system dependencies
-      run: |
-        brew install espeak-ng
-        brew link espeak-ng
+    - uses: gerlero/brew-install@v1
+      with:
+        packages: espeak-ng 
 
     - name: Add espeak to PATH
       run: |
