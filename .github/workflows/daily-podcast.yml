@@ -25,7 +25,8 @@ jobs:
     
     - name: Install system dependencies
       run: |
-        brew install espeak-ng espeak
+        brew uninstall espeak-ng
+        brew install espeak
 
     - name: Set up Python
       uses: actions/setup-python@v4
