@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.common.timeouts import Timeouts
 
 import os
 
@@ -14,6 +15,7 @@ import os
 def upload_podcast(title, description, audio_file, season):
     options = Options()
     options.headless = True
+    options.add_argument("--headless")
     options.binary_location = "/snap/bin/firefox"
 
     print(f"Firefox binary location: {options.binary_location}")
@@ -25,6 +27,8 @@ def upload_podcast(title, description, audio_file, season):
 
     try:
         driver = webdriver.Firefox(service=service, options=options)
+        driver.set_script_timeout(300)
+        driver.set_page_load_timeout(300)
         print("Firefox driver created successfully")
     except Exception as e:
         print(f"Error creating Firefox driver: {str(e)}")
