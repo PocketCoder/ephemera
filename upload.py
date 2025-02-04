@@ -5,8 +5,8 @@ from selenium.webdriver import ActionChains
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.timeouts import Timeouts
 
 import os
@@ -16,25 +16,10 @@ def upload_podcast(title, description, audio_file, season):
     options = Options()
     options.headless = True
     options.add_argument("--headless")
-    options.binary_location = "/snap/bin/firefox"
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
 
-    print(f"Firefox binary location: {options.binary_location}")
-    print(f"Checking if Firefox exists: {os.path.exists(options.binary_location)}")
-
-    service = Service("/snap/bin/geckodriver")
-    print(f"Geckodriver location: {service.path}")
-    print(f"Checking if geckodriver exists: {os.path.exists(service.path)}")
-
-    try:
-        driver = webdriver.Firefox(service=service, options=options)
-        driver.set_script_timeout(300)
-        driver.set_page_load_timeout(300)
-        print("Firefox driver created successfully")
-    except Exception as e:
-        print(f"Error creating Firefox driver: {str(e)}")
-        print(f"Firefox version output: {os.popen('firefox --version').read()}")
-        print(f"Geckodriver version output: {os.popen('geckodriver --version').read()}")
-        raise
+    driver = webdriver.Chrome(service=service, options=options)
 
     driver.get(
         "https://app.redcircle.com/shows/cc3aa3f2-8c37-47e5-a0bc-89dd0e19e887/ep/create"

@@ -10,34 +10,20 @@ permissions:
 
 jobs:
   generate-podcast:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     environment: Daily Generator
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      uses: nanasess/setup-chromedriver@v2
       with:
         repository: PocketCoder/ephemera
         submodules: false
     
     - name: Install system dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libsndfile1 espeak firefox xvfb libgtk-3-0 libdbus-glib-1-2
-
-    - name: Install Gecko Driver
-      run: |
-        wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz
-        tar -xzf geckodriver-v0.35.0-linux64.tar.gz
-        sudo mv geckodriver /snap/bin/
-        sudo chmod +x /snap/bin/geckodriver
-
-    - name: Verify Firefox & Geckodriver Installation
-      run: |
-        which firefox
-        which geckodriver
-        firefox --version
-        geckodriver --version
+        brew install espeak-ng
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -56,13 +42,12 @@ jobs:
     
     - name: Fake Display
       run: |
-        Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
-        echo "export DISPLAY=:99" >> $GITHUB_ENV
+        chromedriver --url-base=/wd/hub &
+        sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
     - name: Generate Podcast
       env:
         DISPLAY: :99
-        MOZ_HEADLESS: 1
         EMAIL: ${{ secrets.EMAIL }}
         PASSWORD: ${{ secrets.PASSWORD }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
