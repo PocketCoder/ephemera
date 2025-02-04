@@ -25,7 +25,12 @@ jobs:
     
     - name: Install system dependencies
       run: |
-        brew install espeak
+        brew install espeak-ng
+        brew link espeak-ng
+
+    - name: Add espeak to PATH
+        run: |
+          echo "$(brew --prefix)/bin" >> $GITHUB_PATH
 
     - name: Set up Python
       uses: actions/setup-python@v4
