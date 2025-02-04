@@ -1,0 +1,2 @@
+brew 'espeak'
+cask 'xquartz'
