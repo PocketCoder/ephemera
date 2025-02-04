@@ -25,7 +25,6 @@ jobs:
     
     - name: Install system dependencies
       run: |
-        brew uninstall espeak-ng
         brew install espeak
 
     - name: Set up Python
