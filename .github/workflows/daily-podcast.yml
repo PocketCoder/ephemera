@@ -37,8 +37,8 @@ jobs:
 
       - name: Install system dependencies (only if not cached)
         run: |
-          if ! command -v espeak-ng &> /dev/null; then
-            brew install espeak-ng
+          if ! command -v espeak &> /dev/null; then
+            brew install espeak
           fi
 
     - name: Cache Python dependencies
