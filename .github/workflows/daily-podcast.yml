@@ -2,7 +2,7 @@ name: Daily Wikipedia Podcast Generation
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # Runs at 1 AM UTC every day
+    - cron: '0 1 * * *'  # 1 AM UTC daily
   workflow_dispatch:
 
 permissions:
@@ -18,59 +18,48 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: PocketCoder/ephemera
-        submodules: false
+        fetch-depth: 0
 
     - name: Setup ChromeDriver
       uses: nanasess/setup-chromedriver@v2
-    
-    - name: Cache Homebrew packages
+
+    - name: Cache Homebrew
       uses: actions/cache@v3
       with:
         path: |
-          /usr/local/Homebrew
-          /usr/local/bin
-          /usr/local/lib
+          ~/Library/Caches/Homebrew
           /usr/local/Cellar
-        key: brew-${{ runner.os }}-${{ hashFiles('**/Brewfile') }}
+        key: brew-${{ runner.os }}-${{ hashFiles('Brewfile') }}
         restore-keys: |
           brew-${{ runner.os }}-
 
-    - name: Install system dependencies (only if not cached)
+    - name: Install Homebrew dependencies
       run: |
-        if ! command -v espeak &> /dev/null; then
-          brew install espeak
-        fi
-
-    - name: Cache Python dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          pip-${{ runner.os }}-
+        brew bundle install --no-lock
+      env:
+        HOMEBREW_NO_AUTO_UPDATE: 1
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
-    
-    - name: Install dependencies
+        cache: 'pip'
+        cache-dependency-path: requirements.txt
+
+    - name: Install Python dependencies
       run: |
-        python -m pip install --upgrade pip
+        pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: Clone Kokoro-82M
       run: |
         git lfs install
         git clone https://huggingface.co/hexgrad/kLegacy Kokoro-82M
-    
-    - name: Fake Display
-      run: |
-        brew install --cask xquartz
-        ( sudo Xvfb :99 -ac -screen 0 1280x1024x24 &)
-        chromedriver --url-base=/wd/hub &
-      env:
-        DISPLAY: :99.0
+
+    - name: Setup virtual display
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: chromedriver --url-base=/wd/hub &
 
     - name: Generate Podcast
       env:
@@ -81,26 +70,25 @@ jobs:
       run: |
         python main.py
 
-    - name: Authenticate GitHub CLI
+    - name: Commit and Push
       env:
         GH_TOKEN: ${{ github.token }}
-      run: gh auth status
-    
-    - name: Commit and Push
       run: |
         git config --global user.name 'GitHub Actions'
         git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
         
-        # Check if there are any new .mp3 files
+        BRANCH_NAME="podcast-$(date +%Y-%m-%d)"
+        
+        # Find and commit new MP3 files
         if [ -n "$(find output -name '*.mp3')" ]; then
-          git checkout -b actions
-          git add output/0/*.mp3
+          git checkout -b $BRANCH_NAME
+          git add output/
           git commit -m "Add daily podcast $(date +'%Y-%m-%d')"
-          git push origin actions
+          git push origin $BRANCH_NAME
 
           gh pr create \
             --base main \
-            --head actions \
+            --head $BRANCH_NAME \
             --title "Daily Podcast Generation $(date +'%Y-%m-%d')" \
             --body "Automated daily podcast generation"
         else
