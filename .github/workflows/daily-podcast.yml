@@ -3,7 +3,7 @@ name: Daily Wikipedia Podcast Generation
 on:
   schedule:
     - cron: '0 1 * * *'  # Runs at 1 AM UTC every day
-  workflow_dispatch:
+    workflow_dispatch:
 
 permissions:
   contents: write
