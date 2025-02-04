@@ -60,7 +60,7 @@ jobs:
     - name: Setup virtual display
       uses: GabrielBB/xvfb-action@v1
       with:
-        run: chromedriver --url-base=/wd/hub &
+        run: chromedriver --url-base=/wd/hub
 
     - name: Generate Podcast
       env:
