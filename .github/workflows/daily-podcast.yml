@@ -29,14 +29,14 @@ jobs:
         path: |
           ~/Library/Caches/Homebrew
           /usr/local/Cellar
-        key: brew-${{ runner.os }}-${{ hashFiles('Brewfile') }}
+        key: brew-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           brew-${{ runner.os }}-
 
     - name: Install Homebrew dependencies
       run: |
-        export HOMEBREW_BREWFILE=~/.brewfile
-        brew bundle install --no-lock
+        brew install espeak
+        brew install --cask xquartz
       env:
         HOMEBREW_NO_AUTO_UPDATE: 1
 
@@ -78,7 +78,7 @@ jobs:
         git config --global user.name 'GitHub Actions'
         git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
         
-        BRANCH_NAME="podcast-$(date +%Y-%m-%d)"
+        BRANCH_NAME="actions"
         
         # Find and commit new MP3 files
         if [ -n "$(find output -name '*.mp3')" ]; then
