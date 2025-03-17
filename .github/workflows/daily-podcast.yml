@@ -50,19 +50,7 @@ jobs:
     - name: Setup virtual display and run script
       uses: GabrielBB/xvfb-action@v1
       with:
-        run: |
-          # Start ChromeDriver in background
-          chromedriver --url-base=/wd/hub &
-          CHROMEDRIVER_PID=$!
-          
-          # Allow ChromeDriver to initialize
-          sleep 3
-          
-          # Run your script
-          python main.py
-          
-          # Kill ChromeDriver process
-          kill $CHROMEDRIVER_PID || true
+        run: python main.py
       env:
         DISPLAY: :99.0
         EMAIL: ${{ secrets.EMAIL }}
